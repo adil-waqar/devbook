@@ -1,14 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
-const gravatar = require('gravatar');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
-const User = require('../../models/User');
+const AuthService = require('../../services/auth');
 
-// @route   GET /api/users
-// @desc    Test route
+// @route   POST /api/users
+// @desc    Create a user
 // @access  public
 router.post(
   '/',
@@ -21,50 +17,25 @@ router.post(
   ],
   async (req, res) => {
     try {
+      // Check if body is valid
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
 
       const { name, email, password } = req.body;
-      // Check if user exists
-      let user = await User.findOne({ email });
-      if (user) {
-        console.log(user);
+      // Instantiate UserService
+      const authServiceInstance = new AuthService();
+      const response = await authServiceInstance.signUp(name, email, password);
+      // Send response
+      if (response.errors)
         return res
-          .status(400)
-          .json({ errors: [{ msg: 'User already exists' }] });
-      }
-      // Get avatar
-      const avatar = gravatar.url(email, {
-        s: '200',
-        r: 'pg',
-        d: 'mm'
-      });
-      // Create a new user
-      user = new User({
-        name,
-        email,
-        password,
-        avatar
-      });
-      // Encrpyt password
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
-      await user.save();
-
-      const payload = {
-        user: {
-          id: user.id
-        }
-      };
-      const token = jwt.sign(payload, config.get('jwtSecret'), {
-        expiresIn: 360000
-      });
-      res.status(201).json({ token });
+          .status(response.statusCode)
+          .json({ errors: response.errors });
+      res.status(response.statusCode).json({ token: response.token });
     } catch (error) {
       console.error(error.message);
-      res.status(500).json({ errors: [{ msg: 'Server error' }] });
+      res.status(500).json({ errors: [{ msg: error.message }] });
     }
   }
 );
