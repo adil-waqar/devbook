@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
+const handleError = require('../../utils/errorHandler');
 const AuthService = require('../../services/auth');
+const UserService = require('../../services/user');
+const auth = require('../../middlewares/auth');
 
 // @route   POST /api/users
 // @desc    Create a user
@@ -39,5 +42,16 @@ router.post(
     }
   }
 );
+
+router.delete('/me', auth, async (req, res) => {
+  try {
+    const userServiceInstance = new UserService();
+    const userId = req.user.id;
+    const response = await userServiceInstance.deleteById(userId);
+    res.status(response.statusCode).json({ msg: response.msg });
+  } catch (error) {
+    handleError(error, res);
+  }
+});
 
 module.exports = router;

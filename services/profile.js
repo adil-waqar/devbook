@@ -6,8 +6,7 @@ class ProfileService {
       'name',
       'avatar'
     ]);
-    if (!profile)
-      return { statusCode: 404, msg: 'There is no profile for the user' };
+    if (!profile) return { statusCode: 404, msg: 'Profile not found' };
     return { statusCode: 200, profile };
   };
 
@@ -29,6 +28,11 @@ class ProfileService {
     // Create
     profile = await Profile.create(newprofile);
     return { statusCode: 201, profile };
+  };
+
+  getAll = async () => {
+    const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+    return { statusCode: 200, profiles };
   };
 }
 

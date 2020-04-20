@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Profile = require('./Profile');
 
-const UserSchema = mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -20,6 +21,16 @@ const UserSchema = mongoose.Schema({
   date: {
     type: Date,
     default: Date.now()
+  }
+});
+
+UserSchema.pre('deleteOne', async function () {
+  try {
+    await Profile.deleteOne({ user: this._conditions._id }).exec();
+    // @todo - Also delete posts
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 });
 
