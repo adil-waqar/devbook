@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 const auth = require('../../middlewares/auth');
 const AuthService = require('./../../services/auth');
 const UserService = require('./../../services/user');
+const handleError = require('../../utils/errorHandler');
 
 // @route   GET /api/auth
 // @desc    Get authenticated user
@@ -15,8 +16,7 @@ router.get('/', auth, async (req, res) => {
     const user = await userServiceInstance.findById(id);
     res.status(200).json(user);
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: error.message });
+    handleError(error, res);
   }
 });
 
@@ -46,8 +46,7 @@ router.post(
       // Return token
       res.status(response.statusCode).json({ token: response.token });
     } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ msg: error.message });
+      handleError(error, res);
     }
   }
 );

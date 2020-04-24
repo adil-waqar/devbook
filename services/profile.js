@@ -1,4 +1,6 @@
 const Profile = require('../models/Profile');
+const Axios = require('axios');
+const config = require('config');
 
 class ProfileService {
   findByUserId = async (id) => {
@@ -21,7 +23,7 @@ class ProfileService {
       const updatedProfile = await Profile.findOneAndUpdate(
         { user: userId },
         newprofile,
-        { new: true, useFindAndModify: false }
+        { new: true }
       );
       return { statusCode: 200, profile: updatedProfile };
     }
@@ -33,6 +35,74 @@ class ProfileService {
   getAll = async () => {
     const profiles = await Profile.find().populate('user', ['name', 'avatar']);
     return { statusCode: 200, profiles };
+  };
+
+  updateExperience = async (data, userId) => {
+    const profile = await Profile.findOneAndUpdate(
+      { user: userId },
+      { $push: { experience: data } },
+      {
+        new: true
+      }
+    );
+    if (!profile) return { statusCode: 404, msg: 'Profile not found' };
+    return { statusCode: 200, profile };
+  };
+
+  deleteExperienceById = async (expId, userId) => {
+    const profile = await Profile.findOne({ user: userId });
+    if (!profile) return { statusCode: 404, msg: 'User profile not found' };
+    const removeIndex = profile.experience
+      .map((item) => item.id)
+      .indexOf(expId);
+    if (removeIndex !== -1) {
+      profile.experience.splice(removeIndex, 1);
+      const newProfile = await profile.save();
+      return { statusCode: 200, profile: newProfile };
+    }
+    return { statusCode: 404, msg: 'Experience id is invalid' };
+  };
+
+  updateEducation = async (education, userId) => {
+    const profile = await Profile.findOneAndUpdate(
+      { user: userId },
+      { $push: { education } },
+      {
+        new: true
+      }
+    );
+    if (!profile) return { statusCode: 404, msg: 'Profile not found' };
+    return { statusCode: 200, profile };
+  };
+
+  deleteEducationById = async (eduId, userId) => {
+    const profile = await Profile.findOne({ user: userId });
+    if (!profile) return { statusCode: 404, msg: 'User profile not found' };
+    const removeIndex = profile.education.map((item) => item.id).indexOf(eduId);
+    if (removeIndex !== -1) {
+      profile.education.splice(removeIndex, 1);
+      const newProfile = await profile.save();
+      return { statusCode: 200, profile: newProfile };
+    }
+    return { statusCode: 404, msg: 'Education id is invalid' };
+  };
+
+  getGithubRepos = async (userName) => {
+    try {
+      const uri = encodeURI(
+        `https://api.github.com/users/${userName}/repos?per_page=5&sort=created:asc`
+      );
+      const headers = {
+        'user-agent': 'node.js',
+        Authorization: `token ${config.get('githubToken')}`
+      };
+
+      const gitHubResponse = await Axios.get(uri, { headers });
+      return { statusCode: 200, githubRepos: gitHubResponse.data };
+    } catch (error) {
+      console.log(error);
+      return { statusCode: 404, msg: 'No Github profile found' };
+    }
   };
 }
 

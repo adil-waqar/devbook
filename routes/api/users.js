@@ -37,8 +37,7 @@ router.post(
           .json({ errors: response.errors });
       res.status(response.statusCode).json({ token: response.token });
     } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ errors: [{ msg: error.message }] });
+      handleError(error, res);
     }
   }
 );

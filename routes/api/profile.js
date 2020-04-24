@@ -81,4 +81,118 @@ router.get('/user/:userId', async (req, res) => {
   }
 });
 
+// @route   PUT /api/profile/experience
+// @desc    Add experience
+// @access  Private
+router.put(
+  '/experience',
+  auth,
+  [
+    check('title', 'Title is required').exists({ checkFalsy: true }),
+    check('company', 'Company is required').exists({ checkFalsy: true }),
+    check('from', 'From is required with format YYYY-MM-DD').isISO8601()
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty())
+        return res.status(400).json({ errors: errors.array() });
+      const profileServiceInstance = new ProfileService();
+      const experience = { ...req.body };
+      const userId = req.user.id;
+      const response = await profileServiceInstance.updateExperience(
+        experience,
+        userId
+      );
+      return res.status(response.statusCode).json(response);
+    } catch (error) {
+      handleError(error, res);
+    }
+  }
+);
+
+// @route   DELETE /api/profile/experience/expId
+// @desc    Delete an experience
+// @access  Private
+router.delete('/experience/:expId', auth, async (req, res) => {
+  try {
+    const { expId } = req.params;
+    const userId = req.user.id;
+    const profileServiceInstance = new ProfileService();
+    const response = await profileServiceInstance.deleteExperienceById(
+      expId,
+      userId
+    );
+    res.status(response.statusCode).json(response);
+  } catch (error) {
+    handleError(error, res);
+  }
+});
+
+// @route   PUT /api/profile/education
+// @desc    Add education
+// @access  Private
+router.put(
+  '/education',
+  auth,
+  [
+    check('school', 'School field is required').exists({ checkFalsy: true }),
+    check('degree', 'Degree field is required').exists({ checkFalsy: true }),
+    check('fieldofstudy', 'Field of study is required').exists({
+      checkFalsy: true
+    }),
+    check('from', 'From is required with format YYYY-MM-DD').isISO8601()
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty())
+        return res.status(400).json({ errors: errors.array() });
+      const profileServiceInstance = new ProfileService();
+      const education = req.body;
+      const userId = req.user.id;
+      const response = await profileServiceInstance.updateEducation(
+        education,
+        userId
+      );
+      return res.status(response.statusCode).json(response);
+    } catch (error) {
+      handleError(error, res);
+    }
+  }
+);
+
+// @route   DELETE /api/profile/education/eduId
+// @desc    Delete education
+// @access  Private
+router.delete('/education/:eduId', auth, async (req, res) => {
+  try {
+    const { eduId } = req.params;
+    const userId = req.user.id;
+    const profileServiceInstance = new ProfileService();
+    const response = await profileServiceInstance.deleteEducationById(
+      eduId,
+      userId
+    );
+    res.status(response.statusCode).json(response);
+  } catch (error) {
+    handleError(error, res);
+  }
+});
+
+// @route   GET /api/profile/github/:userName
+// @desc    Get user repos from Github
+// @access  Public
+router.get('/github/:userName', async (req, res) => {
+  try {
+    const profileServiceInstance = new ProfileService();
+    const response = await profileServiceInstance.getGithubRepos(
+      req.params.userName
+    );
+    return res.status(response.statusCode).json(response);
+  } catch (error) {
+    handleError(error, res);
+  }
+});
+
 module.exports = router;
