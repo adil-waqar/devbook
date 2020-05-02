@@ -1,7 +1,11 @@
 import React, { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { login } from '../../store/actions/auth';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import Spinner from '../UI/Spinner/Spinner';
 
-const Login = () => {
+const Login = ({ login, isAuthenticated, loading }) => {
   const [state, setState] = useState({
     email: '',
     password: ''
@@ -18,10 +22,12 @@ const Login = () => {
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    console.log('Success');
+    login(email, password);
   };
 
-  return (
+  if (isAuthenticated) return <Redirect to='/dashboard' />;
+
+  return !loading ? (
     <Fragment>
       <h1 className='large text-primary'>Sign In</h1>
       <p className='lead'>
@@ -39,7 +45,6 @@ const Login = () => {
             value={email}
             onChange={inputHandler}
             name='email'
-            required
           />
           <small className='form-text'>
             This site uses Gravatar so if you want a profile image, use a
@@ -54,7 +59,6 @@ const Login = () => {
             value={password}
             onChange={inputHandler}
             minLength='6'
-            required
           />
         </div>
         <input type='submit' className='btn btn-primary' value='Login' />
@@ -63,7 +67,22 @@ const Login = () => {
         Don't have an account? <Link to='/register'>Sign Up</Link>
       </p>
     </Fragment>
+  ) : (
+    <Spinner />
   );
 };
 
-export default Login;
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+  loading: PropTypes.bool.isRequired
+};
+
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.auth.isAuthenticated,
+    loading: state.auth.loading
+  };
+};
+
+export default connect(mapStateToProps, { login })(Login);

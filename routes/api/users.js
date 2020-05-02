@@ -47,7 +47,7 @@ router.delete('/me', auth, async (req, res) => {
     const userServiceInstance = new UserService();
     const userId = req.user.id;
     const response = await userServiceInstance.deleteById(userId);
-    res.status(response.statusCode).json({ msg: response.msg });
+    res.status(response.statusCode).json(response);
   } catch (error) {
     handleError(error, res);
   }

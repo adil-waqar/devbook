@@ -13,9 +13,7 @@ router.get('/me', auth, async (req, res) => {
     const profileServiceInstance = new ProfileService();
     const userId = req.user.id;
     const response = await profileServiceInstance.findByUserId(userId);
-    if (!response.profile)
-      return res.status(response.statusCode).json({ msg: response.msg });
-    res.status(response.statusCode).json({ profile: response.profile });
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     handleError(error, res);
   }
@@ -28,10 +26,8 @@ router.post(
   '/',
   auth,
   [
-    check('status', 'Status is required').exists(),
-    check('skills', 'Skills are required and should be an array')
-      .exists()
-      .isArray()
+    check('status', 'Status is required').exists({ checkFalsy: true }),
+    check('skills', 'Skills are required').isArray().notEmpty()
   ],
   async (req, res) => {
     try {
@@ -45,7 +41,7 @@ router.post(
         data,
         userId
       );
-      res.status(response.statusCode).json({ profile: response.profile });
+      res.status(response.statusCode).json(response);
     } catch (error) {
       handleError(error, res);
     }
@@ -59,7 +55,7 @@ router.get('/', async (_, res) => {
   try {
     const profileServiceInstance = new ProfileService();
     const response = await profileServiceInstance.getAll();
-    res.status(response.statusCode).json({ profiles: response.profiles });
+    res.status(response.statusCode).json(response);
   } catch (error) {
     handleError(error, res);
   }

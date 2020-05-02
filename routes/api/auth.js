@@ -13,8 +13,8 @@ router.get('/', auth, async (req, res) => {
   try {
     const { id } = req.user;
     const userServiceInstance = new UserService();
-    const user = await userServiceInstance.findById(id);
-    res.status(200).json(user);
+    const response = await userServiceInstance.findById(id);
+    return res.status(response.statusCode).json(response);
   } catch (error) {
     handleError(error, res);
   }
@@ -27,7 +27,7 @@ router.post(
   '/',
   [
     check('email', 'Email is not valid').isEmail(),
-    check('password', 'Password is required').exists()
+    check('password', 'Password is required').exists({ checkFalsy: true })
   ],
   async (req, res) => {
     try {
