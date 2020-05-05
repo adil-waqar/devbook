@@ -8,6 +8,12 @@ import Alerts from './components/layout/Alert';
 import Dashboard from './components/dashboard/Dashboard';
 import PrivateRoute from './components/routing/PrivateRoute';
 import ProfileForm from './components/profile-forms/ProfileForm';
+import AddExperience from './components/profile-forms/AddExperience';
+import AddEducation from './components/profile-forms/AddEducation';
+import Profiles from './components/profiles/Profiles';
+import Profile from './components/profile/Profile';
+import Posts from './components/posts/Posts';
+import Post from './components/post/Post';
 import './App.css';
 // Redux
 import { Provider } from 'react-redux';
@@ -31,6 +37,8 @@ const App = () => {
           <Switch>
             <Route path='/login' exact component={Login} />
             <Route path='/register' exact component={Register} />
+            <Route path='/profiles' exact component={Profiles} />
+            <Route path='/profile/:id' exact component={Profile} />
             <PrivateRoute path='/dashboard' exact component={Dashboard} />
             <PrivateRoute
               path='/create-profile'
@@ -38,6 +46,18 @@ const App = () => {
               component={ProfileForm}
             />
             <PrivateRoute path='/edit-profile' exact component={ProfileForm} />
+            <PrivateRoute
+              path='/add-experience'
+              exact
+              component={AddExperience}
+            />
+            <PrivateRoute
+              path='/add-education'
+              exact
+              component={AddEducation}
+            />
+            <PrivateRoute path='/posts' exact component={Posts} />
+            <PrivateRoute path='/posts/:id' exact component={Post} />
           </Switch>
         </section>
       </Router>

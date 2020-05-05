@@ -3,7 +3,8 @@ import {
   AUTH_SUCCESS,
   AUTH_FAIL,
   LOAD_USER,
-  LOGOUT
+  LOGOUT,
+  DELETE_ACCOUNT_SUCCESS
 } from '../actions/actionTypes';
 
 const initialState = {
@@ -25,6 +26,7 @@ export default (state = initialState, action) => {
     case LOAD_USER:
       return loadUser(state, action.user);
     case LOGOUT:
+    case DELETE_ACCOUNT_SUCCESS:
       return initialState;
     default:
       return state;

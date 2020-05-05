@@ -21,22 +21,28 @@ const initialState = {
   }
 };
 
-const ProfileForm = ({ createUserProfile, history, profile, loading }) => {
+const ProfileForm = ({
+  createUserProfile,
+  history,
+  profile,
+  loading,
+  getUserProfile
+}) => {
   const [formData, setFormData] = useState(initialState);
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
 
   useEffect(() => {
-    // Populate the existing fields
+    getUserProfile();
+  }, [getUserProfile]);
+
+  useEffect(() => {
+    // Populate the existing field
     if (profile) {
       const profileData = { ...initialState };
       for (const key in profile)
         if (key in profileData) profileData[key] = profile[key];
-
-      for (const key in profile.social)
-        if (key in profileData) profileData[key] = profile.social[key];
-
       if (Array.isArray(profileData.skills))
-        profileData.skills = profileData.skills.join(',');
+        profileData.skills = profileData.skills.join(', ');
 
       setFormData(profileData);
     }
