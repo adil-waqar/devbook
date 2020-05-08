@@ -1,6 +1,0 @@
-{
-  "mongoURI": "mongodb+srv://mr_robot:allowaccess@zeus-xncjm.azure.mongodb.net/test?retryWrites=true&w=majority",
-  "jwtSecret": "topsecretstuff",
-  "expiresIn": "1h",
-  "githubToken": "fd53953cfbea961cc08e5eadc0ce5dedd23ed9f2"
-}
