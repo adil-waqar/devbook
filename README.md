@@ -22,7 +22,7 @@ Following are prerequisites to be installed:
 npm install
 ```
 
-2. Create a default.json file in config/default.json as follows:
+2. Create a .env file in root and add the following content in it. <> are merely placeholders.
 
 ```js
 MONGO_URI=<mongoDBURI>
