@@ -25,12 +25,10 @@ npm install
 2. Create a default.json file in config/default.json as follows:
 
 ```js
-{
-  "mongoURI": "<mongoDBURI>",
-  "jwtSecret": "<randomJWTKey>",
-  "expiresIn": "<expirationTimeOfJWTToken>",
-  "githubToken": "<githubToken>"
-}
+MONGO_URI=<mongoDBURI>
+JWT_SECRET=<randomJWTKey>
+EXPIRES_IN=<expirationTimeOfJWTToken>
+GITHUB_TOKEN=<githubToken>
 ```
 
 ## Extra notes!
