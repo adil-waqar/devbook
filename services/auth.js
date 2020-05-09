@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const config = require('config');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
@@ -68,8 +67,8 @@ class AuthService {
   };
 
   generateJWT = (payload) => {
-    const token = jwt.sign(payload, config.get('jwtSecret'), {
-      expiresIn: config.get('expiresIn')
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.EXPIRES_IN
     });
     return token;
   };
