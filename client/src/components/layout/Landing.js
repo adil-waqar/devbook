@@ -12,7 +12,7 @@ const Landing = ({ isAuthenticated }) => {
           <h1 className='x-large'>Developer's Book</h1>
           <p className='lead'>
             Create a developer profile/portfolio, share posts and get help from
-            other developers
+            other developers. Enjoy!
           </p>
           <div className='buttons'>
             <Link to='/register' className='btn btn-primary'>
