@@ -1,6 +1,5 @@
 const Profile = require('../models/Profile');
 const Axios = require('axios');
-const config = require('config');
 
 class ProfileService {
   findByUserId = async (id) => {
@@ -94,7 +93,7 @@ class ProfileService {
       );
       const headers = {
         'user-agent': 'node.js',
-        Authorization: `token ${config.get('githubToken')}`
+        Authorization: `token ${process.env.GITHUB_TOKEN}`
       };
 
       const gitHubResponse = await Axios.get(uri, { headers });
